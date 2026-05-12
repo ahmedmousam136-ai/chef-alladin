@@ -13,7 +13,7 @@
   <!-- Razorpay Checkout -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-  <!-- Feather Icons -->
+  <!-- Feather Icons (Lightweight robust icons) -->
   <script src="https://unpkg.com/feather-icons"></script>
 
   <!-- Tailwind CSS via CDN -->
@@ -92,10 +92,10 @@
   </nav>
 
   <!-- Hero Section -->
-  <section id="hero" class="relative min-h-[100svh] flex items-center justify-center pb-20 -mt-20">
+  <section id="hero" class="relative min-h-[100svh] flex items-center justify-center pb-20 -mt-20 border-b border-brand-800">
     <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1514361892635-6b07e31e75f3?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center bg-no-repeat"></div>
     <div class="absolute inset-0 bg-gradient-to-b from-brand-950/80 via-brand-950/60 to-brand-950"></div>
-    <div class="relative z-10 text-center px-6 max-w-4xl mx-auto space-y-8 mt-20 fade-in-up">
+    <div class="relative z-10 text-center px-6 max-w-4xl mx-auto space-y-8 mt-20">
        <p class="text-brand-500 uppercase tracking-[0.4em] text-xs font-semibold">An Epicurean Coastal Journey</p>
        <h1 class="font-serif text-5xl md:text-8xl lg:text-9xl text-brand-100 font-medium tracking-tight">NOCTURNE</h1>
        <p class="text-brand-100/80 text-lg md:text-xl font-light max-w-2xl mx-auto">Where the ocean's bounty meets the mystique of the evening.</p>
@@ -125,7 +125,7 @@
   </section>
 
   <!-- Menu Section -->
-  <section id="menu" class="py-20 md:py-32 bg-brand-950 border-t border-brand-800 relative stretch-full">
+  <section id="menu" class="py-20 md:py-32 bg-brand-950 border-t border-brand-800">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-12 md:mb-16 space-y-4">
         <p class="text-brand-500 uppercase tracking-[0.4em] text-[10px] md:text-xs font-semibold">The Collection</p>
@@ -184,7 +184,7 @@
       <div id="reservation-success" class="hidden bg-brand-950/80 border border-brand-500/20 p-8 md:p-12 text-center rounded-sm shadow-2xl backdrop-blur-md">
         <h3 class="font-serif text-2xl md:text-3xl mb-4 text-brand-500">Admission Confirmed</h3>
         <p class="text-brand-100/80 font-light text-sm">We anticipate your arrival at NOCTURNE. Details have been dispatched via email.</p>
-        <button onclick="document.getElementById('reservation-success').classList.add('hidden'); document.getElementById('reservation-form').classList.remove('hidden');" class="mt-8 text-brand-500 border-b border-brand-500 pb-1 text-xs uppercase tracking-widest font-semibold">Make Another Booking</button>
+        <button onclick="resetDepositForm()" class="mt-8 text-brand-500 border-b border-brand-500 pb-1 text-xs uppercase tracking-widest font-semibold flex items-center justify-center gap-2 mx-auto"><i data-feather="refresh-cw" class="w-3 h-3"></i> Make Another Booking</button>
       </div>
   
       <form id="reservation-form" onsubmit="event.preventDefault();" class="bg-brand-950 p-6 sm:p-8 md:p-12 border border-brand-800 rounded-sm shadow-2xl grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 md:gap-y-10">
@@ -202,7 +202,7 @@
         </div>
         <div class="space-y-3">
           <label class="text-[10px] sm:text-xs uppercase text-brand-100/70 tracking-[0.2em] font-medium">Date & Time</label>
-          <input required type="datetime-local" class="w-full bg-transparent border-b border-brand-800 pb-3 text-brand-100 focus:outline-none focus:border-brand-500 transition-colors min-h-[36px] cursor-text invert" />
+          <input required type="datetime-local" class="w-full bg-transparent border-b border-brand-800 pb-3 text-brand-100 focus:outline-none focus:border-brand-500 transition-colors min-h-[36px] cursor-text invert dark:invert-0" style="color-scheme: dark" />
         </div>
         <div class="space-y-3">
           <label class="text-[10px] sm:text-xs uppercase text-brand-100/70 tracking-[0.2em] font-medium">Party Size</label>
@@ -273,12 +273,12 @@
     </div>
   </footer>
 
-  <!-- Scripts -->
+  <!-- User Scripts & Interactivity -->
   <script>
-    // Initialize Icons
+    // 1. Initialize Default Icons
     feather.replace();
 
-    // Mobile Menu Toggle
+    // 2. Mobile Menu Toggle 
     const mobileBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
     const mobileLinks = document.querySelectorAll('.mobile-link');
@@ -291,7 +291,7 @@
       mobileMenu.classList.add('hidden');
     }));
 
-    // Data Models
+    // 3. React Props -> Javascript Datastore
     const menuData = {
       act1: [
         { name: "Osetra Caviar Service", desc: "Traditional garnishes, house-made blinis, crème fraîche.", price: "₹14,500", amt: 14500, img: "https://images.unsplash.com/photo-1599084924616-e55d61483011?auto=format&fit=crop&q=80&w=800" },
@@ -301,7 +301,7 @@
       act2: [
         { name: "Duck Breast à l'Orange", desc: "Dry-aged duck, blood orange reduction, smoked parsnip.", price: "₹5,800", amt: 5800, img: "https://images.unsplash.com/photo-1608897013039-887f214b9833?auto=format&fit=crop&q=80&w=800" },
         { name: "Glacier Toothfish", desc: "Miso-black garlic glaze, charred baby leeks, dashi broth.", price: "₹6,400", amt: 6400, img: "https://images.unsplash.com/photo-1599907604310-85f20e402660?auto=format&fit=crop&q=80&w=800" },
-        { name: "Ash-Crusted Venison", desc: "Foraged mushroom purée, elderberry jus, crispy lichens.", price: "₹6,200", amt: 6200, img: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&q=80&w=800" }
+        { name: "Ash-Crusted Venison", desc: "Foraged mushroom purée, elderberry jus.", price: "₹6,200", amt: 6200, img: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&q=80&w=800" }
       ],
       act3: [
         { name: "Dark Matter Cube", desc: "70% Valrhona, activated charcoal, raspberry core.", price: "₹2,400", amt: 2400, img: "https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&q=80&w=800" },
@@ -310,8 +310,8 @@
     };
 
     const experiencesData = [
-      { id: 1, title: "Candlelight Nocturne Dinner", desc: "An exclusive 7-course tasting menu paired with rare vintages.", price: "₹15,000", amt: 15000, img: "https://images.unsplash.com/photo-1542314831-f11c7fa1fb61?auto=format&fit=crop&q=80&w=1000" },
-      { id: 2, title: "Weekend Omakase Voucher", desc: "Gift a curated 5-course signature experience.", price: "₹8,000", amt: 8000, img: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&q=80&w=1000" }
+      { title: "Candlelight Nocturne Dinner", desc: "An exclusive 7-course tasting menu paired with rare vintages.", price: "₹15,000", amt: 15000, img: "https://images.unsplash.com/photo-1542314831-f11c7fa1fb61?auto=format&fit=crop&q=80&w=1000" },
+      { title: "Weekend Omakase Voucher", desc: "Gift a curated 5-course signature experience.", price: "₹8,000", amt: 8000, img: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&q=80&w=1000" }
     ];
 
     const ambienceImages = [
@@ -323,7 +323,7 @@
       "https://images.unsplash.com/photo-1498654896293-37aacf113fd9?auto=format&fit=crop&q=80&w=800"
     ];
 
-    // Rendering Logic
+    // 4. View Rendering Generation 
     function renderMenuTab(target) {
       const container = document.getElementById('menu-content');
       const items = menuData[target];
@@ -334,13 +334,13 @@
           </div>
           <div class="flex-grow space-y-2 flex flex-col">
              <div class="flex justify-between items-start gap-4">
-               <h3 class="font-serif text-lg md:text-xl font-medium">${dish.name}</h3>
-               <span class="font-serif text-brand-500 whitespace-nowrap text-lg md:text-xl">${dish.price}</span>
+               <h3 class="font-serif text-lg lg:text-xl font-medium">${dish.name}</h3>
+               <span class="font-serif text-brand-500 whitespace-nowrap text-lg lg:text-xl">${dish.price}</span>
              </div>
-             <p class="text-xs md:text-sm text-brand-100/60 font-light flex-grow leading-relaxed">${dish.desc}</p>
+             <p class="text-xs lg:text-sm text-brand-100/60 font-light flex-grow leading-relaxed">${dish.desc}</p>
              <div class="grid grid-cols-2 gap-2 mt-4">
-                <button onclick="handleRazorpay(${dish.amt}, 'Order: ${dish.name} via UPI')" class="flex items-center justify-center gap-2 py-3 border border-brand-800 text-brand-100 hover:text-brand-950 hover:bg-brand-500 hover:border-brand-500 transition-colors uppercase tracking-widest text-[9px] sm:text-[10px] font-semibold"><i data-feather="smartphone" class="w-3 h-3"></i> UPI</button>
-                <button onclick="handleRazorpay(${dish.amt}, 'Order: ${dish.name} via Card')" class="flex items-center justify-center gap-2 py-3 border border-brand-800 text-brand-100 hover:text-brand-950 hover:bg-brand-500 hover:border-brand-500 transition-colors uppercase tracking-widest text-[9px] sm:text-[10px] font-semibold"><i data-feather="credit-card" class="w-3 h-3"></i> Card</button>
+                <button onclick="handleRazorpay(${dish.amt}, 'Order: ${dish.name}')" class="flex items-center justify-center gap-2 py-3 border border-brand-800 text-brand-100 hover:text-brand-950 hover:bg-brand-500 hover:border-brand-500 transition-colors uppercase tracking-widest text-[9px] sm:text-[10px] font-semibold"><i data-feather="smartphone" class="w-3 h-3"></i> UPI</button>
+                <button onclick="handleRazorpay(${dish.amt}, 'Order: ${dish.name}')" class="flex items-center justify-center gap-2 py-3 border border-brand-800 text-brand-100 hover:text-brand-950 hover:bg-brand-500 hover:border-brand-500 transition-colors uppercase tracking-widest text-[9px] sm:text-[10px] font-semibold"><i data-feather="credit-card" class="w-3 h-3"></i> Card</button>
              </div>
           </div>
         </div>
@@ -355,14 +355,14 @@
           <div class="aspect-[16/9] overflow-hidden relative">
             <img src="${exp.img}" alt="${exp.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100" />
           </div>
-          <div class="p-6 md:p-8 flex flex-col flex-grow">
+          <div class="p-6 lg:p-8 flex flex-col flex-grow">
             <h3 class="font-serif text-2xl text-brand-100 mb-3">${exp.title}</h3>
-            <p class="text-brand-100/60 font-light text-xs md:text-sm leading-relaxed mb-8 flex-grow">${exp.desc}</p>
+            <p class="text-brand-100/60 font-light text-xs lg:text-sm leading-relaxed mb-8 flex-grow">${exp.desc}</p>
             <div class="flex flex-col gap-4">
               <span class="font-serif text-xl border-t border-brand-800 pt-4 text-brand-500">${exp.price}</span>
               <div class="grid grid-cols-2 gap-3">
-                <button onclick="handleRazorpay(${exp.amt}, '${exp.title} Voucher via UPI')" class="flex items-center justify-center gap-2 py-3 border border-brand-500 text-brand-500 hover:bg-brand-500 hover:text-brand-950 transition-colors uppercase tracking-widest text-[9px] sm:text-[10px] font-semibold"><i data-feather="smartphone" class="w-3 h-3"></i> UPI</button>
-                <button onclick="handleRazorpay(${exp.amt}, '${exp.title} Voucher via Card')" class="flex items-center justify-center gap-2 py-3 border border-brand-500 text-brand-500 hover:bg-brand-500 hover:text-brand-950 transition-colors uppercase tracking-widest text-[9px] sm:text-[10px] font-semibold"><i data-feather="credit-card" class="w-3 h-3"></i> Card</button>
+                <button onclick="handleRazorpay(${exp.amt}, '${exp.title} Voucher')" class="flex items-center justify-center gap-2 py-3 border border-brand-500 text-brand-500 hover:bg-brand-500 hover:text-brand-950 transition-colors uppercase tracking-widest text-[9px] sm:text-[10px] font-semibold"><i data-feather="smartphone" class="w-3 h-3"></i> UPI</button>
+                <button onclick="handleRazorpay(${exp.amt}, '${exp.title} Voucher')" class="flex items-center justify-center gap-2 py-3 border border-brand-500 text-brand-500 hover:bg-brand-500 hover:text-brand-950 transition-colors uppercase tracking-widest text-[9px] sm:text-[10px] font-semibold"><i data-feather="credit-card" class="w-3 h-3"></i> Card</button>
               </div>
             </div>
           </div>
@@ -382,42 +382,45 @@
       `).join('');
     }
 
-    // Init Logic
+    // Bind Views
     renderMenuTab('act1');
     renderExperiences();
     renderGallery();
     feather.replace();
 
-    // Tab Event Listeners
+    // 5. JavaScript Tabs Behavior
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
+        // Toggle tab styles
         document.querySelectorAll('.tab-btn').forEach(b => {
           b.classList.remove('active', 'text-brand-500');
           b.classList.add('text-brand-100/50');
         });
         e.target.classList.add('active', 'text-brand-500');
         e.target.classList.remove('text-brand-100/50');
+        
+        // Re-render
         renderMenuTab(e.target.dataset.target);
       });
     });
 
-    // Razorpay Integration Standard JS
-    // Mocks backend for frontend-only showcase
+    // 6. Razorpay Integration
     async function initRazorpay(amount, description, isDeposit = false) {
       try {
+        // Create an order server-side via the custom Express `/api/razorpay/order` backend path.
+        // Falls back to mock UI if backend isn't linked to real keys
         const orderData = await fetch('/api/razorpay/order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ amount: amount * 100 })
         }).then(res => res.json()).catch(() => ({ 
-          // Provide mock fallback if server API is unavailable
           id: "order_mock_" + Date.now(), 
           amount: amount * 100, 
           currency: "INR" 
         }));
 
         const options = {
-          key: 'rzp_test_mock_key', // Replace with Razorpay Key ID
+          key: 'rzp_test_mock_key', // You must configure this backend
           amount: orderData.amount,
           currency: orderData.currency,
           name: 'NOCTURNE',
@@ -428,19 +431,19 @@
               document.getElementById('reservation-form').classList.add('hidden');
               document.getElementById('reservation-success').classList.remove('hidden');
             } else {
-              alert('Payment Successful! Payment ID: ' + response.razorpay_payment_id);
+              alert('Transaction Processed! Reference ID: ' + response.razorpay_payment_id);
             }
           },
           theme: { color: '#C19E67' }
         };
 
-        const rzp1 = new window.Razorpay(options);
-        rzp1.on('payment.failed', function (response){
-          alert("Payment Failed: " + response.error.description);
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (response){
+          alert("Card/Payment authorization failed: " + response.error.description);
         });
-        rzp1.open();
+        rzp.open();
       } catch (err) {
-        alert("Payment initialization failed.");
+        alert("Platform initialization timeout.");
       }
     }
 
@@ -449,14 +452,19 @@
     }
 
     function checkoutDeposit(method) {
-      // Basic validation
       const form = document.getElementById('reservation-form');
       if (!form.checkValidity()) {
         form.reportValidity();
         return;
       }
-      // Method is passed for tracking/UI preference
-      initRazorpay(1000, `Reservation Deposit via ${method.toUpperCase()}`, true);
+      // Submit 1000 INR -> Passed to Razorpay API in standard sequence 
+      initRazorpay(1000, `Admission Access Deposit - ${method.toUpperCase()}`, true);
+    }
+    
+    function resetDepositForm() {
+       document.getElementById('reservation-form').reset();
+       document.getElementById('reservation-success').classList.add('hidden');
+       document.getElementById('reservation-form').classList.remove('hidden');
     }
   </script>
 </body>
