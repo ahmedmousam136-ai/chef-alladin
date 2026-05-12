@@ -1,116 +1,463 @@
-import { motion } from 'motion/react';
-import { Gift, CreditCard, Smartphone } from 'lucide-react';
-import { useState } from 'react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOCTURNE | An Epicurean Coastal Journey</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Razorpay Checkout -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-const experiences = [
-  {
-    title: "Candlelight Nocturne Dinner",
-    description: "An exclusive 7-course tasting menu paired with rare vintages, served in our private cellar illuminated by candlelight.",
-    price: 15000,
-    priceLabel: "₹15,000",
-    image: "https://images.unsplash.com/photo-1542314831-f11c7fa1fb61?auto=format&fit=crop&q=80&w=1000",
-  },
-  {
-    title: "Weekend Omakase Voucher",
-    description: "Gift the ultimate gastronomic journey. A curated 5-course experience crafted from the finest seasonal ingredients.",
-    price: 8000,
-    priceLabel: "₹8,000",
-    image: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&q=80&w=1000",
-  }
-];
+  <!-- Feather Icons -->
+  <script src="https://unpkg.com/feather-icons"></script>
 
-export default function Experiences() {
-  const [processing, setProcessing] = useState<number | null>(null);
-
-  const handlePurchase = async (idx: number, amount: number, method?: string) => {
-    setProcessing(idx);
-    try {
-      const response = await fetch('/api/razorpay/order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: amount * 100 }) // Razorpay expects paise
-      });
-      const order = await response.json();
-      
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_mock_key',
-        amount: order.amount,
-        currency: order.currency,
-        name: 'NOCTURNE',
-        description: experiences[idx].title,
-        order_id: order.id,
-        handler: function (response: any) {
-          alert('Payment Successful! Payment ID: ' + response.razorpay_payment_id);
-        },
-        theme: { color: '#C19E67' } // brand-500
-      };
-      
-      const rzp1 = new (window as any).Razorpay(options);
-      rzp1.open();
-    } catch (e) {
-      console.error(e);
-      alert('Payment initialization failed. Please check configuration.');
-    } finally {
-      setProcessing(null);
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Outfit", "ui-sans-serif", "system-ui", "sans-serif"],
+            serif: ["EB Garamond", "ui-serif", "Georgia", "serif"],
+          },
+          colors: {
+            brand: {
+              100: '#FCFAF5',
+              200: '#EAE4DA',
+              500: '#C19E67',
+              700: '#293830',
+              800: '#1F2823',
+              900: '#121A16',
+              950: '#0B0E0C',
+            }
+          }
+        }
+      }
     }
-  };
+  </script>
+  <style>
+    @layer utilities {
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    }
+    html { scroll-behavior: smooth; }
+    .tab-btn.active {
+      color: #C19E67;
+      border-bottom-color: #C19E67;
+    }
+    .gallery-img-wrapper {
+      break-inside: avoid;
+    }
+  </style>
+</head>
+<body class="bg-brand-950 text-brand-100 antialiased overflow-x-hidden pt-20">
 
-  return (
-    <section id="experiences" className="py-32 bg-brand-950 relative overflow-hidden border-t border-brand-800">
-      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-        <div className="text-center mb-16 space-y-6">
-          <p className="text-brand-500 uppercase tracking-[0.4em] text-[10px] md:text-xs font-semibold">Exclusives</p>
-          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-brand-100">Gift an Experience</h2>
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full z-50 bg-brand-950/90 backdrop-blur-md border-b border-brand-800 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <a href="#" class="font-serif text-2xl tracking-widest text-brand-100 flex items-center gap-2">
+        <i data-feather="moon" class="text-brand-500 w-5 h-5"></i> NOCTURNE
+      </a>
+      <!-- Desktop Menu -->
+      <div class="hidden md:flex space-x-8">
+        <a href="#story" class="text-xs uppercase tracking-[0.2em] text-brand-100/70 hover:text-brand-500 transition-colors">The Vision</a>
+        <a href="#menu" class="text-xs uppercase tracking-[0.2em] text-brand-100/70 hover:text-brand-500 transition-colors">Acts</a>
+        <a href="#experiences" class="text-xs uppercase tracking-[0.2em] text-brand-100/70 hover:text-brand-500 transition-colors">Exclusives</a>
+        <a href="#ambience" class="text-xs uppercase tracking-[0.2em] text-brand-100/70 hover:text-brand-500 transition-colors">Gallery</a>
+      </div>
+      <a href="#reservation" class="hidden md:block px-6 py-2 border border-brand-500 text-brand-500 text-xs uppercase tracking-widest hover:bg-brand-500 hover:text-brand-950 transition-colors rounded-sm">
+        Admissions
+      </a>
+      <!-- Mobile Toggle -->
+      <button class="md:hidden text-brand-100" id="mobile-menu-btn">
+        <i data-feather="menu"></i>
+      </button>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-brand-950 border-b border-brand-800">
+      <div class="flex flex-col px-6 py-4 space-y-4">
+        <a href="#story" class="mobile-link text-xs uppercase tracking-[0.2em] text-brand-100">The Vision</a>
+        <a href="#menu" class="mobile-link text-xs uppercase tracking-[0.2em] text-brand-100">Acts</a>
+        <a href="#experiences" class="mobile-link text-xs uppercase tracking-[0.2em] text-brand-100">Exclusives</a>
+        <a href="#ambience" class="mobile-link text-xs uppercase tracking-[0.2em] text-brand-100">Gallery</a>
+        <a href="#reservation" class="mobile-link text-xs uppercase tracking-[0.2em] text-brand-500">Admissions</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="hero" class="relative min-h-[100svh] flex items-center justify-center pb-20 -mt-20">
+    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1514361892635-6b07e31e75f3?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center bg-no-repeat"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-brand-950/80 via-brand-950/60 to-brand-950"></div>
+    <div class="relative z-10 text-center px-6 max-w-4xl mx-auto space-y-8 mt-20 fade-in-up">
+       <p class="text-brand-500 uppercase tracking-[0.4em] text-xs font-semibold">An Epicurean Coastal Journey</p>
+       <h1 class="font-serif text-5xl md:text-8xl lg:text-9xl text-brand-100 font-medium tracking-tight">NOCTURNE</h1>
+       <p class="text-brand-100/80 text-lg md:text-xl font-light max-w-2xl mx-auto">Where the ocean's bounty meets the mystique of the evening.</p>
+       <div class="pt-8 w-full px-4">
+         <a href="#reservation" class="inline-flex w-full md:w-auto items-center justify-center px-10 md:px-12 py-4 bg-brand-500 text-brand-950 uppercase tracking-[0.2em] text-xs md:text-sm font-semibold hover:bg-brand-500/80 transition-colors shadow-lg rounded-sm">Secure Your Evening</a>
+       </div>
+    </div>
+  </section>
+
+  <!-- Story Section -->
+  <section id="story" class="py-20 md:py-32 bg-brand-900 border-t border-brand-800 relative z-10 text-brand-100">
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-center">
+        <div class="space-y-6 md:space-y-8 order-2 lg:order-1">
+          <div><p class="text-brand-500 uppercase tracking-[0.4em] text-[10px] md:text-xs font-semibold">The Vision</p></div>
+          <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl text-brand-100 leading-[1.1]">An Epicurean <br class="hidden md:block" />Coastal Journey</h2>
+          <div class="space-y-4 md:space-y-6 text-brand-100/70 font-light text-base md:text-lg leading-relaxed pt-4 md:pt-6">
+            <p>NOCTURNE transcends the traditional dining construct. We blend evocative flavor profiles with the rugged beauty of the coast, crafting an immersive dialogue between the ocean's bounty and the guest.</p>
+            <p>Utilizing avant-garde techniques and uncompromising ingredients, every act of our tasting menu is designed to challenge perceptions and stimulate the senses long after the sun sets.</p>
+          </div>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          {experiences.map((exp, idx) => (
-            <motion.div 
-              key={idx}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.2 }}
-              className="bg-brand-900 border border-brand-800 rounded-sm overflow-hidden group hover:border-brand-500/50 transition-colors duration-500 flex flex-col"
-            >
-              <div className="aspect-[16/9] overflow-hidden relative">
-                <img 
-                  src={exp.image} 
-                  alt={exp.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
-                />
-              </div>
-              <div className="p-8 flex flex-col flex-grow">
-                <h3 className="font-serif text-2xl text-brand-100 mb-4">{exp.title}</h3>
-                <p className="text-brand-100/60 font-light text-sm leading-relaxed mb-8 flex-grow">
-                  {exp.description}
-                </p>
-                <div className="flex flex-col gap-4 mt-auto">
-                  <span className="font-serif text-xl text-brand-500">{exp.priceLabel}</span>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button 
-                      onClick={() => handlePurchase(idx, exp.price, 'upi')}
-                      disabled={processing === idx}
-                      className="flex items-center justify-center gap-2 px-4 py-3 border border-brand-500 text-brand-500 hover:bg-brand-500 hover:text-brand-950 transition-colors text-[10px] uppercase tracking-widest font-semibold disabled:opacity-50"
-                    >
-                      <Smartphone size={14} />
-                      {processing === idx ? '...' : 'UPI'}
-                    </button>
-                    <button 
-                      onClick={() => handlePurchase(idx, exp.price, 'card')}
-                      disabled={processing === idx}
-                      className="flex items-center justify-center gap-2 px-4 py-3 border border-brand-500 text-brand-500 hover:bg-brand-500 hover:text-brand-950 transition-colors text-[10px] uppercase tracking-widest font-semibold disabled:opacity-50"
-                    >
-                      <CreditCard size={14} />
-                      {processing === idx ? '...' : 'Card'}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+        <div class="w-full aspect-[4/5] bg-brand-800 overflow-hidden relative rounded-sm z-10 order-1 lg:order-2">
+            <img src="https://images.unsplash.com/photo-1581184953963-d15972933fc1?auto=format&fit=crop&q=80&w=1000" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" alt="Chef plating" />
         </div>
       </div>
-    </section>
-  );
-}
+    </div>
+  </section>
+
+  <!-- Menu Section -->
+  <section id="menu" class="py-20 md:py-32 bg-brand-950 border-t border-brand-800 relative stretch-full">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-12 md:mb-16 space-y-4">
+        <p class="text-brand-500 uppercase tracking-[0.4em] text-[10px] md:text-xs font-semibold">The Collection</p>
+        <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl text-brand-100">A Curated Gastronomy</h2>
+      </div>
+      
+      <!-- Tabs -->
+      <div class="flex flex-wrap justify-center gap-4 md:gap-8 mb-8 md:mb-12 border-b border-brand-800 pb-2 md:pb-4" id="menu-tabs">
+        <button class="tab-btn active border-b-2 border-transparent pb-2 text-[10px] md:text-xs tracking-[0.2em] uppercase transition-colors text-brand-100/50 hover:text-brand-100" data-target="act1">Act I: Prelude</button>
+        <button class="tab-btn border-b-2 border-transparent pb-2 text-[10px] md:text-xs tracking-[0.2em] uppercase transition-colors text-brand-100/50 hover:text-brand-100" data-target="act2">Act II: Main</button>
+        <button class="tab-btn border-b-2 border-transparent pb-2 text-[10px] md:text-xs tracking-[0.2em] uppercase transition-colors text-brand-100/50 hover:text-brand-100" data-target="act3">Act III: Encore</button>
+      </div>
+
+      <!-- Content -->
+      <div id="menu-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Experiences Section -->
+  <section id="experiences" class="py-20 md:py-32 bg-brand-900 border-t border-brand-800">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-12 md:mb-16 space-y-4">
+        <p class="text-brand-500 uppercase tracking-[0.4em] text-[10px] md:text-xs font-semibold">Exclusives</p>
+        <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl text-brand-100">Gift an Experience</h2>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12" id="experiences-container">
+         <!-- Injected via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section id="ambience" class="py-20 md:py-32 bg-brand-950 border-t border-brand-800">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-12 md:mb-16 space-y-4">
+        <p class="text-brand-500 uppercase tracking-[0.4em] text-[10px] md:text-xs font-semibold">Atmosphere</p>
+        <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl text-brand-100">The Social Gallery</h2>
+        <p class="text-brand-100/60 font-light text-sm max-w-2xl mx-auto">Tag <span class="text-brand-500">@nocturne.dining</span> on Instagram to be featured.</p>
+      </div>
+      <div class="columns-1 sm:columns-2 lg:columns-3 gap-4 md:gap-6 space-y-4 md:space-y-6" id="gallery-container">
+         <!-- Injected via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Reservation Section -->
+  <section id="reservation" class="py-20 md:py-32 bg-brand-900 border-t border-brand-800">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+      <div class="text-center mb-12 md:mb-16 space-y-4">
+         <p class="text-brand-500 uppercase tracking-[0.4em] text-[10px] md:text-xs font-semibold">Admissions</p>
+         <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl text-brand-100">Secure Your Evening</h2>
+      </div>
+      
+      <div id="reservation-success" class="hidden bg-brand-950/80 border border-brand-500/20 p-8 md:p-12 text-center rounded-sm shadow-2xl backdrop-blur-md">
+        <h3 class="font-serif text-2xl md:text-3xl mb-4 text-brand-500">Admission Confirmed</h3>
+        <p class="text-brand-100/80 font-light text-sm">We anticipate your arrival at NOCTURNE. Details have been dispatched via email.</p>
+        <button onclick="document.getElementById('reservation-success').classList.add('hidden'); document.getElementById('reservation-form').classList.remove('hidden');" class="mt-8 text-brand-500 border-b border-brand-500 pb-1 text-xs uppercase tracking-widest font-semibold">Make Another Booking</button>
+      </div>
+  
+      <form id="reservation-form" onsubmit="event.preventDefault();" class="bg-brand-950 p-6 sm:p-8 md:p-12 border border-brand-800 rounded-sm shadow-2xl grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 md:gap-y-10">
+        <div class="space-y-3">
+          <label class="text-[10px] sm:text-xs uppercase text-brand-100/70 tracking-[0.2em] font-medium">Guest Name</label>
+          <input required id="res_name" type="text" class="w-full bg-transparent border-b border-brand-800 pb-3 text-brand-100 focus:outline-none focus:border-brand-500 transition-colors placeholder-brand-100/20" placeholder="Ex. James Sterling" />
+        </div>
+        <div class="space-y-3">
+          <label class="text-[10px] sm:text-xs uppercase text-brand-100/70 tracking-[0.2em] font-medium">Contact Number</label>
+          <input required id="res_phone" type="tel" class="w-full bg-transparent border-b border-brand-800 pb-3 text-brand-100 focus:outline-none focus:border-brand-500 transition-colors placeholder-brand-100/20" placeholder="+1 (555) 000-0000" />
+        </div>
+        <div class="space-y-3 relative md:col-span-2">
+          <label class="text-[10px] sm:text-xs uppercase text-brand-100/70 tracking-[0.2em] font-medium">Email Address</label>
+          <input required id="res_email" type="email" class="w-full bg-transparent border-b border-brand-800 pb-3 text-brand-100 focus:outline-none focus:border-brand-500 transition-colors placeholder-brand-100/20" placeholder="james@example.com" />
+        </div>
+        <div class="space-y-3">
+          <label class="text-[10px] sm:text-xs uppercase text-brand-100/70 tracking-[0.2em] font-medium">Date & Time</label>
+          <input required type="datetime-local" class="w-full bg-transparent border-b border-brand-800 pb-3 text-brand-100 focus:outline-none focus:border-brand-500 transition-colors min-h-[36px] cursor-text invert" />
+        </div>
+        <div class="space-y-3">
+          <label class="text-[10px] sm:text-xs uppercase text-brand-100/70 tracking-[0.2em] font-medium">Party Size</label>
+          <select required class="w-full bg-brand-950 border-b border-brand-800 pb-3 text-brand-100 focus:outline-none focus:border-brand-500 transition-colors min-h-[36px]">
+            <option value="" disabled selected>Number of guests</option>
+            <option value="2">2 Guests</option>
+            <option value="4">4 Guests</option>
+            <option value="6+">6+ Guests (Call to confirm)</option>
+          </select>
+        </div>
+  
+        <div class="md:col-span-2 pt-6 md:pt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <button type="button" onclick="checkoutDeposit('upi')" class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 sm:px-8 py-4 bg-brand-500 text-brand-950 font-semibold hover:bg-brand-500/80 uppercase tracking-widest text-[10px] sm:text-xs transition-colors rounded-sm shadow-lg">
+            <i data-feather="smartphone" class="w-4 h-4"></i> Pay Deposit via UPI
+          </button>
+          <button type="button" onclick="checkoutDeposit('card')" class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 sm:px-8 py-4 border border-brand-500 text-brand-500 font-semibold hover:bg-brand-500 hover:text-brand-950 uppercase tracking-widest text-[10px] sm:text-xs transition-colors rounded-sm shadow-lg">
+            <i data-feather="credit-card" class="w-4 h-4"></i> Pay Deposit via Card
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-brand-950 border-t border-brand-900 text-brand-100">
+    <div class="max-w-7xl mx-auto px-6 py-16 md:py-32">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16 text-center md:text-left">
+        <div class="space-y-6">
+          <h4 class="font-serif tracking-[0.4em] text-xl">
+            <span class="text-brand-500">N</span>OCTURNE
+          </h4>
+          <p class="text-brand-100/80 font-light leading-relaxed text-sm">
+            The pinnacle of nocturnal fine dining.<br />
+            An intimate journey through flavor and form.
+          </p>
+        </div>
+        <div class="space-y-6 md:space-y-8">
+          <h4 class="uppercase tracking-[0.3em] text-[10px] md:text-xs text-brand-500 font-semibold">Contact & Location</h4>
+          <div class="space-y-3 text-brand-100/80 font-light text-sm">
+            <p>1942 Epicurean Way</p>
+            <p>Metropolis, NY 10012</p>
+            <p class="pt-2 md:pt-4 hover:text-brand-500 transition-colors cursor-pointer">reservations@nocturne.com</p>
+            <p class="hover:text-brand-500 transition-colors cursor-pointer">+1 (212) 555-0199</p>
+          </div>
+        </div>
+        <div class="space-y-6 md:space-y-8">
+          <h4 class="uppercase tracking-[0.3em] text-[10px] md:text-xs text-brand-500 font-semibold">Service Hours</h4>
+          <div class="space-y-3 text-brand-100/80 font-light text-sm cursor-default">
+            <div class="flex justify-between md:justify-start gap-4 md:gap-8">
+              <span class="w-20 md:w-24 text-left font-medium text-brand-100">Tue - Thu</span><span>18:00 - 22:30</span>
+            </div>
+            <div class="flex justify-between md:justify-start gap-4 md:gap-8">
+              <span class="w-20 md:w-24 text-left font-medium text-brand-100">Fri - Sat</span><span>17:30 - 23:00</span>
+            </div>
+            <div class="flex justify-between md:justify-start gap-4 md:gap-8 text-brand-100/60">
+              <span class="w-20 md:w-24 text-left font-medium">Sun - Mon</span><span>Private Events Only</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-16 md:mt-24 pt-8 border-t border-brand-800 text-center text-brand-100/60 text-[10px] font-light uppercase tracking-widest flex flex-col md:flex-row justify-between items-center gap-4">
+        <p>© 2026 NOCTURNE Dining. All rights reserved.</p>
+        <div class="flex space-x-6">
+          <a href="#" class="hover:text-brand-500 transition-colors"><i data-feather="instagram" class="w-4 h-4"></i></a>
+          <a href="#" class="hover:text-brand-500 transition-colors"><i data-feather="twitter" class="w-4 h-4"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Initialize Icons
+    feather.replace();
+
+    // Mobile Menu Toggle
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileLinks = document.querySelectorAll('.mobile-link');
+    
+    mobileBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+    
+    mobileLinks.forEach(l => l.addEventListener('click', () => {
+      mobileMenu.classList.add('hidden');
+    }));
+
+    // Data Models
+    const menuData = {
+      act1: [
+        { name: "Osetra Caviar Service", desc: "Traditional garnishes, house-made blinis, crème fraîche.", price: "₹14,500", amt: 14500, img: "https://images.unsplash.com/photo-1599084924616-e55d61483011?auto=format&fit=crop&q=80&w=800" },
+        { name: "Uni & Wagyu Tartare", desc: "A5 Miyazaki beef, Hokkaido sea urchin, smoked soy.", price: "₹6,800", amt: 6800, img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800" },
+        { name: "Smoked Oyster Emulsion", desc: "Charcoal oil, pickled sea beans, finger lime.", price: "₹2,800", amt: 2800, img: "https://images.unsplash.com/photo-1559842186-e415fb5a6fcb?auto=format&fit=crop&q=80&w=800" }
+      ],
+      act2: [
+        { name: "Duck Breast à l'Orange", desc: "Dry-aged duck, blood orange reduction, smoked parsnip.", price: "₹5,800", amt: 5800, img: "https://images.unsplash.com/photo-1608897013039-887f214b9833?auto=format&fit=crop&q=80&w=800" },
+        { name: "Glacier Toothfish", desc: "Miso-black garlic glaze, charred baby leeks, dashi broth.", price: "₹6,400", amt: 6400, img: "https://images.unsplash.com/photo-1599907604310-85f20e402660?auto=format&fit=crop&q=80&w=800" },
+        { name: "Ash-Crusted Venison", desc: "Foraged mushroom purée, elderberry jus, crispy lichens.", price: "₹6,200", amt: 6200, img: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&q=80&w=800" }
+      ],
+      act3: [
+        { name: "Dark Matter Cube", desc: "70% Valrhona, activated charcoal, raspberry core.", price: "₹2,400", amt: 2400, img: "https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&q=80&w=800" },
+        { name: "Smoked Vanilla Bean", desc: "Bourbon caramel, charred cedar, sea salt.", price: "₹1,800", amt: 1800, img: "https://images.unsplash.com/photo-1571115177098-24ec42ed204d?auto=format&fit=crop&q=80&w=800" }
+      ]
+    };
+
+    const experiencesData = [
+      { id: 1, title: "Candlelight Nocturne Dinner", desc: "An exclusive 7-course tasting menu paired with rare vintages.", price: "₹15,000", amt: 15000, img: "https://images.unsplash.com/photo-1542314831-f11c7fa1fb61?auto=format&fit=crop&q=80&w=1000" },
+      { id: 2, title: "Weekend Omakase Voucher", desc: "Gift a curated 5-course signature experience.", price: "₹8,000", amt: 8000, img: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&q=80&w=1000" }
+    ];
+
+    const ambienceImages = [
+      "https://images.unsplash.com/photo-1544148103-0773bf10d330?auto=format&fit=crop&q=80&w=800",
+      "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=800",
+      "https://images.unsplash.com/photo-1582169505937-b9992bd01ed9?auto=format&fit=crop&q=80&w=800",
+      "https://images.unsplash.com/photo-1478144592103-25e218a04891?auto=format&fit=crop&q=80&w=800",
+      "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&q=80&w=800",
+      "https://images.unsplash.com/photo-1498654896293-37aacf113fd9?auto=format&fit=crop&q=80&w=800"
+    ];
+
+    // Rendering Logic
+    function renderMenuTab(target) {
+      const container = document.getElementById('menu-content');
+      const items = menuData[target];
+      container.innerHTML = items.map(dish => `
+        <div class="bg-brand-900 border border-brand-800 rounded-sm hover:border-brand-500/50 transition-colors duration-500 flex flex-col p-4 group">
+          <div class="w-full aspect-[4/3] overflow-hidden mb-4 relative rounded-sm">
+             <img src="${dish.img}" alt="${dish.name}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100" />
+          </div>
+          <div class="flex-grow space-y-2 flex flex-col">
+             <div class="flex justify-between items-start gap-4">
+               <h3 class="font-serif text-lg md:text-xl font-medium">${dish.name}</h3>
+               <span class="font-serif text-brand-500 whitespace-nowrap text-lg md:text-xl">${dish.price}</span>
+             </div>
+             <p class="text-xs md:text-sm text-brand-100/60 font-light flex-grow leading-relaxed">${dish.desc}</p>
+             <div class="grid grid-cols-2 gap-2 mt-4">
+                <button onclick="handleRazorpay(${dish.amt}, 'Order: ${dish.name} via UPI')" class="flex items-center justify-center gap-2 py-3 border border-brand-800 text-brand-100 hover:text-brand-950 hover:bg-brand-500 hover:border-brand-500 transition-colors uppercase tracking-widest text-[9px] sm:text-[10px] font-semibold"><i data-feather="smartphone" class="w-3 h-3"></i> UPI</button>
+                <button onclick="handleRazorpay(${dish.amt}, 'Order: ${dish.name} via Card')" class="flex items-center justify-center gap-2 py-3 border border-brand-800 text-brand-100 hover:text-brand-950 hover:bg-brand-500 hover:border-brand-500 transition-colors uppercase tracking-widest text-[9px] sm:text-[10px] font-semibold"><i data-feather="credit-card" class="w-3 h-3"></i> Card</button>
+             </div>
+          </div>
+        </div>
+      `).join('');
+      feather.replace();
+    }
+
+    function renderExperiences() {
+      const container = document.getElementById('experiences-container');
+      container.innerHTML = experiencesData.map(exp => `
+        <div class="bg-brand-900 border border-brand-800 rounded-sm overflow-hidden group hover:border-brand-500/50 transition-colors duration-500 flex flex-col">
+          <div class="aspect-[16/9] overflow-hidden relative">
+            <img src="${exp.img}" alt="${exp.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100" />
+          </div>
+          <div class="p-6 md:p-8 flex flex-col flex-grow">
+            <h3 class="font-serif text-2xl text-brand-100 mb-3">${exp.title}</h3>
+            <p class="text-brand-100/60 font-light text-xs md:text-sm leading-relaxed mb-8 flex-grow">${exp.desc}</p>
+            <div class="flex flex-col gap-4">
+              <span class="font-serif text-xl border-t border-brand-800 pt-4 text-brand-500">${exp.price}</span>
+              <div class="grid grid-cols-2 gap-3">
+                <button onclick="handleRazorpay(${exp.amt}, '${exp.title} Voucher via UPI')" class="flex items-center justify-center gap-2 py-3 border border-brand-500 text-brand-500 hover:bg-brand-500 hover:text-brand-950 transition-colors uppercase tracking-widest text-[9px] sm:text-[10px] font-semibold"><i data-feather="smartphone" class="w-3 h-3"></i> UPI</button>
+                <button onclick="handleRazorpay(${exp.amt}, '${exp.title} Voucher via Card')" class="flex items-center justify-center gap-2 py-3 border border-brand-500 text-brand-500 hover:bg-brand-500 hover:text-brand-950 transition-colors uppercase tracking-widest text-[9px] sm:text-[10px] font-semibold"><i data-feather="credit-card" class="w-3 h-3"></i> Card</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderGallery() {
+      const container = document.getElementById('gallery-container');
+      container.innerHTML = ambienceImages.map((src, idx) => `
+        <div class="gallery-img-wrapper relative group overflow-hidden rounded-sm">
+          <img src="${src}" alt="Ambience ${idx + 1}" class="w-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105" />
+          <div class="absolute inset-0 bg-brand-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+             <span class="text-brand-100 uppercase tracking-widest text-[10px] border border-brand-100/50 px-4 py-2 hover:bg-brand-100 hover:text-brand-950 transition-colors cursor-pointer">View</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Init Logic
+    renderMenuTab('act1');
+    renderExperiences();
+    renderGallery();
+    feather.replace();
+
+    // Tab Event Listeners
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.classList.remove('active', 'text-brand-500');
+          b.classList.add('text-brand-100/50');
+        });
+        e.target.classList.add('active', 'text-brand-500');
+        e.target.classList.remove('text-brand-100/50');
+        renderMenuTab(e.target.dataset.target);
+      });
+    });
+
+    // Razorpay Integration Standard JS
+    // Mocks backend for frontend-only showcase
+    async function initRazorpay(amount, description, isDeposit = false) {
+      try {
+        const orderData = await fetch('/api/razorpay/order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: amount * 100 })
+        }).then(res => res.json()).catch(() => ({ 
+          // Provide mock fallback if server API is unavailable
+          id: "order_mock_" + Date.now(), 
+          amount: amount * 100, 
+          currency: "INR" 
+        }));
+
+        const options = {
+          key: 'rzp_test_mock_key', // Replace with Razorpay Key ID
+          amount: orderData.amount,
+          currency: orderData.currency,
+          name: 'NOCTURNE',
+          description: description,
+          order_id: orderData.id,
+          handler: function (response) {
+            if (isDeposit) {
+              document.getElementById('reservation-form').classList.add('hidden');
+              document.getElementById('reservation-success').classList.remove('hidden');
+            } else {
+              alert('Payment Successful! Payment ID: ' + response.razorpay_payment_id);
+            }
+          },
+          theme: { color: '#C19E67' }
+        };
+
+        const rzp1 = new window.Razorpay(options);
+        rzp1.on('payment.failed', function (response){
+          alert("Payment Failed: " + response.error.description);
+        });
+        rzp1.open();
+      } catch (err) {
+        alert("Payment initialization failed.");
+      }
+    }
+
+    function handleRazorpay(amount, desc) {
+      initRazorpay(amount, desc, false);
+    }
+
+    function checkoutDeposit(method) {
+      // Basic validation
+      const form = document.getElementById('reservation-form');
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      // Method is passed for tracking/UI preference
+      initRazorpay(1000, `Reservation Deposit via ${method.toUpperCase()}`, true);
+    }
+  </script>
+</body>
+</html>
